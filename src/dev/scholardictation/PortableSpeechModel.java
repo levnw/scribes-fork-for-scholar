@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.zip.ZipInputStream;
-import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.Minecraft;
 
 final class PortableSpeechModel {
     private static final String NAME = "vosk-model-small-en-us-0.15";
@@ -13,7 +13,7 @@ final class PortableSpeechModel {
     private PortableSpeechModel() {}
 
     static synchronized Path install() throws IOException {
-        Path cache = FabricLoader.getInstance().getConfigDir().resolve("scholar-dictation");
+        Path cache = Minecraft.getInstance().gameDirectory.toPath().resolve("config").resolve("scholar-dictation");
         Path model = cache.resolve(NAME);
         if (Files.isDirectory(model)) return model;
 

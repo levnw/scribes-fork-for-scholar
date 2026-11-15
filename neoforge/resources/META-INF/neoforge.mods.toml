@@ -1,0 +1,31 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "GPL-3.0-only"
+
+[[mods]]
+modId = "scholar_dictation"
+version = "@VERSION@"
+displayName = "Scribe’s Fork for Scholar"
+description = "Dictate into writable books using on-device speech recognition."
+
+[[mixins]]
+config = "scholar_dictation.mixins.json"
+
+[[dependencies.scholar_dictation]]
+modId = "neoforge"
+type = "required"
+versionRange = "[26.3.0.103,26.4)"
+side = "CLIENT"
+
+[[dependencies.scholar_dictation]]
+modId = "minecraft"
+type = "required"
+versionRange = "[26.3,26.4)"
+side = "CLIENT"
+
+[[dependencies.scholar_dictation]]
+modId = "scholar"
+type = "required"
+versionRange = "[1.2.12]"
+ordering = "AFTER"
+side = "CLIENT"

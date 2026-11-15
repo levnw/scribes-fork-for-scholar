@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Locale;
-import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.Minecraft;
 
 public final class MacSpeechSession implements SpeechSession {
     private static final String APP = "Scholar Dictation.app";
@@ -40,7 +40,7 @@ public final class MacSpeechSession implements SpeechSession {
     }
 
     private static Path installHelper() throws IOException {
-        Path root = FabricLoader.getInstance().getConfigDir().resolve("scholar-dictation").resolve(BUILD);
+        Path root = Minecraft.getInstance().gameDirectory.toPath().resolve("config").resolve("scholar-dictation").resolve(BUILD);
         Path app = root.resolve(APP);
         String executable = "Contents/MacOS/ScholarDictation";
         for (String file : new String[]{"Contents/Info.plist", "Contents/_CodeSignature/CodeResources", executable}) {

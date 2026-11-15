@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.Minecraft;
 
 public final class MicrophoneSettings {
     static final Device SYSTEM_DEFAULT = new Device("", "");
@@ -13,7 +13,7 @@ public final class MicrophoneSettings {
     public record Device(String id, String name) {}
 
     private static Path path() {
-        return FabricLoader.getInstance().getConfigDir().resolve("scholar-dictation.json");
+        return Minecraft.getInstance().gameDirectory.toPath().resolve("config").resolve("scholar-dictation.json");
     }
 
     public static Device selected() {
