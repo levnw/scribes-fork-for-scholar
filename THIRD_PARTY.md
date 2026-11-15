@@ -1,0 +1,1 @@
+The portable dictation backend uses [Vosk 0.3.45](https://github.com/alphacep/vosk-api/tree/v0.3.45) and [vosk-model-small-en-us-0.15](https://alphacephei.com/vosk/models), both licensed under Apache 2.0.

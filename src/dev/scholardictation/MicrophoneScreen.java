@@ -14,7 +14,7 @@ import net.minecraft.network.chat.Component;
 
 final class MicrophoneScreen extends Screen {
     private final Screen parent;
-    private MacSpeechSession scan;
+    private SpeechSession scan;
     private List<MicrophoneSettings.Device> devices = List.of(MicrophoneSettings.SYSTEM_DEFAULT);
     private Component status;
     private CycleButton<MicrophoneSettings.Device> picker;
@@ -28,7 +28,7 @@ final class MicrophoneScreen extends Screen {
     protected void init() {
         buildPicker();
         addRenderableWidget(Button.builder(label("refresh"), _ -> refresh())
-            .bounds(width / 2 - 110, height / 2 + 22, 220, 20).build()).active = MacSpeechSession.supported();
+            .bounds(width / 2 - 110, height / 2 + 22, 220, 20).build()).active = SpeechSession.supported();
         addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, _ -> onClose())
             .bounds(width / 2 - 110, height / 2 + 52, 220, 20).build());
         if (scan == null && status == null) refresh();
@@ -51,17 +51,17 @@ final class MicrophoneScreen extends Screen {
                     status = Component.literal(error.getMessage());
                 }
             }));
-        picker.active = MacSpeechSession.supported() && scan == null;
+        picker.active = SpeechSession.supported() && scan == null;
     }
 
     private void refresh() {
-        if (!MacSpeechSession.supported()) {
+        if (!SpeechSession.supported()) {
             status = label("unavailable");
             return;
         }
         closeScan();
         try {
-            scan = new MacSpeechSession("list", "");
+            scan = SpeechSession.open("list", "");
             picker.active = false;
             status = label("loading");
         } catch (IOException error) {

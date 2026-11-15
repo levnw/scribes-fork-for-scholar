@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "scholar_dictation",
-  "version": "0.2.0",
+  "version": "0.3.0-beta.1",
   "name": "Scribe’s Fork for Scholar",
-  "description": "Dictate into writable books using on-device macOS speech recognition.",
+  "description": "Dictate into writable books using on-device speech recognition.",
   "environment": "client",
   "mixins": [
     "scholar_dictation.mixins.json"

@@ -3,7 +3,7 @@
   "gui.scholar_dictation.starting": "Starting microphone…",
   "gui.scholar_dictation.stop": "Listening… Click to stop and insert",
   "gui.scholar_dictation.finish": "Transcribing…",
-  "gui.scholar_dictation.unavailable": "Dictation requires macOS 26 or later on Apple silicon",
+  "gui.scholar_dictation.unavailable": "Dictation is unavailable on this platform",
   "gui.scholar_dictation.error": "Dictation: %s",
   "gui.scholar_dictation.full": "The transcript does not fit on this page. Try a shorter phrase.",
   "gui.scholar_dictation.empty": "No speech recognized.",
@@ -12,6 +12,6 @@
   "gui.scholar_dictation.device": "Microphone",
   "gui.scholar_dictation.default": "System Default",
   "gui.scholar_dictation.loading": "Loading microphones…",
-  "gui.scholar_dictation.device_help": "System Default follows your macOS sound settings.",
+  "gui.scholar_dictation.device_help": "System Default follows your operating system sound settings.",
   "gui.scholar_dictation.refresh": "Refresh microphones"
 }

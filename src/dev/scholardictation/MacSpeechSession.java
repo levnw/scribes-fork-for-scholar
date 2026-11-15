@@ -8,16 +8,13 @@ import java.nio.file.StandardCopyOption;
 import java.util.Locale;
 import net.fabricmc.loader.api.FabricLoader;
 
-public final class MacSpeechSession implements AutoCloseable {
+public final class MacSpeechSession implements SpeechSession {
     private static final String APP = "Scholar Dictation.app";
     private static final String BUILD = "0.1.3";
     private final Path directory;
     private final Process launcher;
     private final long started = System.nanoTime();
     private long stopped;
-
-    public enum State { STARTING, LISTENING, FINISHING }
-    public record Result(String text, String error) {}
 
     public static boolean supported() {
         return System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("mac")

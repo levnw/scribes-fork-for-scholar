@@ -1,5 +1,6 @@
 """Build the Fabric add-on against a local Modrinth 26.3 installation."""
 import argparse
+import hashlib
 import json
 import shutil
 import subprocess
@@ -11,12 +12,18 @@ parser.add_argument("--scholar", type=Path, required=True)
 parser.add_argument("--modmenu", type=Path, required=True)
 parser.add_argument("--fabric-api", type=Path, required=True)
 parser.add_argument("--ecj", type=Path, required=True)
+parser.add_argument("--vosk", type=Path, required=True)
+parser.add_argument("--vosk-linux-arm64", type=Path, required=True)
+parser.add_argument("--speech-model", type=Path, required=True)
 parser.add_argument("--meta", type=Path, default=Path.home() / "Library/Application Support/ModrinthApp/meta")
 parser.add_argument("--version", default="26.3-0.20.1")
 parser.add_argument("--output", type=Path)
 parser.add_argument("--reuse-helper", type=Path, help="Keep the signed helper from an earlier build")
 args = parser.parse_args()
 root = Path(__file__).resolve().parent
+with args.speech_model.open("rb") as model:
+    if hashlib.sha256(model.read()).hexdigest() != "30f26242c4eb449f948e42cb302dd7a686cb29a3423a8367f99ff41780942498":
+        parser.error("--speech-model must be the upstream vosk-model-small-en-us-0.15.zip")
 mod_version = json.loads((root / "resources/fabric.mod.json").read_text())["version"]
 output = args.output or Path(f"scholar-dictation-{mod_version}.jar")
 build = root / "build"
@@ -67,6 +74,16 @@ subprocess.run([str(java), "-jar", str(args.ecj), "-25", "-proc:none",
                 *map(str, (root / "src").rglob("*.java"))], check=True)
 output.parent.mkdir(parents=True, exist_ok=True)
 with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as jar:
+    jar.write(root / "LICENSE", "LICENSE")
+    jar.write(root / "LICENSE-VOSK", "LICENSE-VOSK")
+    jar.write(root / "THIRD_PARTY.md", "THIRD_PARTY.md")
+    jar.write(args.speech_model, "speech/vosk-model-small-en-us-0.15.zip", compress_type=zipfile.ZIP_STORED)
+    with zipfile.ZipFile(args.vosk) as vosk:
+        for member in vosk.infolist():
+            if not member.is_dir() and member.filename.endswith((".so", ".dll", ".dylib")):
+                jar.writestr(member.filename, vosk.read(member))
+    with zipfile.ZipFile(args.vosk_linux_arm64) as vosk:
+        jar.writestr("linux-aarch64/libvosk.so", vosk.read("vosk-linux-aarch64-0.3.45/libvosk.so"))
     for folder, prefix in ((classes, ""), (root / "resources", ""), (contents, "native/helper/Contents/")):
         for file in sorted(folder.rglob("*")):
             if file.is_file():

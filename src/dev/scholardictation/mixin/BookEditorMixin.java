@@ -1,7 +1,7 @@
 package dev.scholardictation.mixin;
 
 import dev.scholardictation.DictationScreen;
-import dev.scholardictation.MacSpeechSession;
+import dev.scholardictation.SpeechSession;
 import dev.scholardictation.MicrophoneSettings;
 import io.github.mortuusars.scholar.client.gui.Widgets;
 import io.github.mortuusars.scholar.client.gui.screen.edit.SpreadBookEditScreen;
@@ -50,7 +50,7 @@ abstract class BookEditorMixin extends Screen implements DictationScreen {
     };
 
     @Unique private ImageButton scholarDictation$button;
-    @Unique private MacSpeechSession scholarDictation$session;
+    @Unique private SpeechSession scholarDictation$session;
     @Unique private long scholarDictation$animationStart;
     @Unique private TextBox scholarDictation$page;
     @Unique private String scholarDictation$original;
@@ -73,7 +73,7 @@ abstract class BookEditorMixin extends Screen implements DictationScreen {
         scholarDictation$button = addRenderableWidget(new ImageButton(x, y, 18, 18,
             Widgets.threeStateSprites(Identifier.fromNamespaceAndPath("scholar_dictation", "book/microphone")),
             _ -> scholarDictation$toggle()));
-        scholarDictation$button.active = MacSpeechSession.supported();
+        scholarDictation$button.active = SpeechSession.supported();
         scholarDictation$tooltip = null;
         scholarDictation$updateButton();
     }
@@ -120,14 +120,17 @@ abstract class BookEditorMixin extends Screen implements DictationScreen {
 
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true, remap = false)
     private void scholarDictation$handleShortcut(KeyEvent event, CallbackInfoReturnable<Boolean> ci) {
-        if (scholarDictation$button == null || !scholarDictation$button.active
-            || event.shortcutKey() != SDLK_V || event.hasAltDown()) return;
+        if (scholarDictation$button == null || !scholarDictation$button.active || event.hasAltDown()) return;
 
         boolean commandDown = (event.modifiers() & SDL_KMOD_GUI) != 0;
-        if (event.hasControlDown() && !commandDown && !event.hasShiftDown()) {
+        boolean mac = net.minecraft.util.Util.getPlatform() == net.minecraft.util.Util.OS.OSX;
+        boolean dictationKey = mac
+            ? event.shortcutKey() == SDLK_V && !event.hasShiftDown()
+            : event.shortcutKey() == org.lwjgl.sdl.SDLKeycode.SDLK_D && event.hasShiftDown();
+        if (event.hasControlDown() && !commandDown && dictationKey) {
             if (scholarDictation$session == null) scholarDictation$toggle();
             ci.setReturnValue(true);
-        } else if (commandDown && !event.hasControlDown() && getFocused() instanceof TextBox page
+        } else if (mac && event.shortcutKey() == SDLK_V && commandDown && !event.hasControlDown() && getFocused() instanceof TextBox page
             && (page == leftPageTextBox || page == rightPageTextBox)) {
             // Scholar's editor handles paste with Control and uses Shift to strip formatting.
             int pasteModifiers = (event.modifiers() & ~SDL_KMOD_GUI) | SDL_KMOD_LCTRL;
@@ -185,7 +188,7 @@ abstract class BookEditorMixin extends Screen implements DictationScreen {
     private void scholarDictation$toggle() {
         if (scholarDictation$session != null) {
             try {
-                if (scholarDictation$session.state() == MacSpeechSession.State.LISTENING) {
+                if (scholarDictation$session.state() == SpeechSession.State.LISTENING) {
                     scholarDictation$session.stop();
                 }
             } catch (IOException e) {
@@ -204,7 +207,7 @@ abstract class BookEditorMixin extends Screen implements DictationScreen {
             }
             try {
                 scholarDictation$status = null;
-                scholarDictation$session = new MacSpeechSession("record", MicrophoneSettings.selected().id());
+                scholarDictation$session = SpeechSession.open("record", MicrophoneSettings.selected().id());
                 scholarDictation$animationStart = System.nanoTime();
                 scholarDictation$page = page;
                 var editor = page.getEditor();
@@ -271,7 +274,7 @@ abstract class BookEditorMixin extends Screen implements DictationScreen {
     @Unique
     private void scholarDictation$updateButton() {
         if (scholarDictation$button == null) return;
-        MacSpeechSession.State state = scholarDictation$session == null ? null : scholarDictation$session.state();
+        SpeechSession.State state = scholarDictation$session == null ? null : scholarDictation$session.state();
         String label;
         if (!scholarDictation$button.active) {
             label = "unavailable";
@@ -287,7 +290,7 @@ abstract class BookEditorMixin extends Screen implements DictationScreen {
         Component tooltip = scholarDictation$status != null ? scholarDictation$status
             : Component.translatable("gui.scholar_dictation." + label);
         if (scholarDictation$status == null && label.equals("start")) {
-            tooltip = tooltip.copy().append(Component.literal(" Ctrl+V").withStyle(ChatFormatting.DARK_GRAY));
+            tooltip = tooltip.copy().append(Component.literal(net.minecraft.util.Util.getPlatform() == net.minecraft.util.Util.OS.OSX ? " Ctrl+V" : " Ctrl+Shift+D").withStyle(ChatFormatting.DARK_GRAY));
         }
         if (!tooltip.equals(scholarDictation$tooltip)) {
             scholarDictation$tooltip = tooltip;
