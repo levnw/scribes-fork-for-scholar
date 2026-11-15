@@ -1,0 +1,7 @@
+{
+  "required": true,
+  "package": "dev.scholardictation.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": ["BookEditorMixin", "TextBoxAccess"],
+  "injectors": {"defaultRequire": 1}
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "scholar_dictation",
+  "version": "0.2.0",
+  "name": "Scribe’s Fork for Scholar",
+  "description": "Dictate into writable books using on-device macOS speech recognition.",
+  "environment": "client",
+  "mixins": [
+    "scholar_dictation.mixins.json"
+  ],
+  "depends": {
+    "minecraft": "26.3.x",
+    "java": ">=25",
+    "fabricloader": ">=0.19.5",
+    "scholar": "1.2.12",
+    "fabric-lifecycle-events-v1": "*"
+  },
+  "entrypoints": {
+    "client": [
+      "dev.scholardictation.DictationClient"
+    ],
+    "modmenu": [
+      "dev.scholardictation.DictationModMenu"
+    ]
+  },
+  "suggests": {
+    "modmenu": "*"
+  },
+  "license": "GPL-3.0-only"
+}
