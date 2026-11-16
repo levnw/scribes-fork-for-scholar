@@ -19,6 +19,7 @@ parser.add_argument("--speech-model", type=Path, required=True)
 parser.add_argument("--meta", type=Path, default=Path.home() / "Library/Application Support/ModrinthApp/meta")
 parser.add_argument("--version", default="26.3-0.20.1")
 parser.add_argument("--output", type=Path)
+parser.add_argument("--java", type=Path, help="Java 25 executable")
 parser.add_argument("--reuse-helper", type=Path, help="Keep the signed helper from an earlier build")
 args = parser.parse_args()
 root = Path(__file__).resolve().parent
@@ -38,7 +39,7 @@ if build.exists():
 classes.mkdir(parents=True)
 version = args.meta / "versions" / args.version / args.version
 metadata = json.loads(Path(str(version) + ".json").read_text())
-java = next((args.meta / "java_versions").glob("*/Contents/Home/bin/java"))
+java = args.java or next((args.meta / "java_versions").glob("*/Contents/Home/bin/java"))
 libraries = [args.scholar]
 for entry in metadata["libraries"]:
     artifact = entry.get("downloads", {}).get("artifact", {}).get("path")
@@ -49,7 +50,7 @@ for entry in metadata["libraries"]:
     if candidate.is_file():
         libraries.append(candidate)
 
-sources = list((root / "src").rglob("*.java"))
+sources = sorted((root / "src").rglob("*.java"))
 if args.neoforge:
     neo = args.neoforge / "libraries"
     libraries.extend(neo.glob("net/neoforged/**/minecraft-client-patched-26.3.0.103.jar"))

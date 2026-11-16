@@ -19,3 +19,5 @@ python3 build.py --scholar /path/to/scholar-fabric-26.3-1.2.12.jar --ecj /path/t
 To build the NeoForge variant, install NeoForge 26.3.0.103 in a Minecraft directory with the official installer. Pass that directory as `--neoforge` and pass the NeoForge Scholar 1.2.12 JAR to `--scholar`. Omit `--fabric-api` and `--modmenu` for that build. Use separate output filenames for Fabric and NeoForge.
 
 The build compiles and ad-hoc signs the macOS helper and packages it with the mod. The button sprites are in `resources/assets/scholar_dictation/textures/gui/sprites/book/`. Replace any state with an 18 × 18 transparent PNG using the same filename and rebuild.
+
+See [Native code and release verification](NATIVE-CODE.md) for bundled binary sources and build verification.

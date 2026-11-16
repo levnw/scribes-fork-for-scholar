@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "scholar_dictation",
-  "version": "0.3.0-beta.1",
+  "version": "0.3.0-beta.2",
   "name": "Scribe’s Fork for Scholar",
   "description": "Dictate into writable books using on-device speech recognition.",
   "environment": "client",
